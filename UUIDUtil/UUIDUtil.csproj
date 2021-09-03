@@ -2,6 +2,18 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Authors>amsga</Authors>
+    <NeutralLanguage>en-SG</NeutralLanguage>
+    <Description>A project to store UUID functions within a library for future use.</Description>
+    <PackageTags>UUID GUID</PackageTags>
+    <PackageProjectUrl>https://github.com/amsga/UUIDUtil</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/amsga/UUIDUtil</RepositoryUrl>
+	<Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
   </PropertyGroup>
 
 </Project>
