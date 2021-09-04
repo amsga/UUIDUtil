@@ -2,7 +2,165 @@
 
 namespace UUIDUtil
 {
+    /// <summary>
+    /// Class Library to generate Universally Unique Identifier (UUID) / Globally Unique Identifier (GUID) based on Version 1 (date-time and MAC address).
+    /// </summary>
     public class UUIDv1
     {
+        protected internal static System.Net.NetworkInformation.PhysicalAddress s_physicalAddress = System.Net.NetworkInformation.PhysicalAddress.None;
+        protected internal static Int32 s_clock = Int32.MinValue;
+        protected internal static DateTime s_epoch = new DateTime(1582, 10, 15, 0, 0, 0, DateTimeKind.Utc);
+
+        protected internal static Object s_initLock = new Object();
+        protected internal static Object s_clockLock = new Object();
+
+        /// <summary>
+        /// Initialises a new GUID/UUID based on Version 1 (date-time and MAC address)
+        /// </summary>
+        /// <returns>A new Guid object</returns>
+        public static Guid NewUUIDv1()
+        {
+            return NewUUIDv1(DateTime.UtcNow);
+        }
+
+        /// <summary>
+        /// Initialises the 48-bit Node ID and returns it.<br />
+        /// Returns the MAC Address of a Network Interface Card, if available.
+        /// Otherwise, returns a randomly genrated 48-bit Node ID.
+        /// </summary>
+        /// <returns>A byte-array representing the 48-bit Node ID</returns>
+        public static Byte[] GetNodeID()
+        {
+            if (System.Net.NetworkInformation.PhysicalAddress.None.Equals(s_physicalAddress))
+            {
+                System.Net.NetworkInformation.NetworkInterface[] networkInterfaces = System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces();
+                if (networkInterfaces.Length > 0)
+                {
+                    s_physicalAddress = networkInterfaces[0].GetPhysicalAddress();
+                }
+                else
+                {
+                    using (System.Security.Cryptography.RNGCryptoServiceProvider cryptoServiceProvider = new System.Security.Cryptography.RNGCryptoServiceProvider())
+                    {
+                        Byte[] fakeNode = new Byte[6];
+                        cryptoServiceProvider.GetBytes(fakeNode);
+                        fakeNode[0] = (Byte)(fakeNode[0] | 0x01);
+                        s_physicalAddress = new System.Net.NetworkInformation.PhysicalAddress(fakeNode);
+                    }
+                }
+            }
+
+            return s_physicalAddress.GetAddressBytes();
+        }
+
+        /// <summary>
+        /// Intialises the 14-bit Clock Sequence and returns the current value with the Variant.<br />
+        /// Will return an incremented Clock Sequence on each call, modulo 14-bit.
+        /// </summary>
+        /// <returns>A byte-array representing the 14-bit Clock Sequence, together with the Variant</returns>
+        public static Byte[] GetClockSequence()
+        {
+            lock (s_initLock)
+            {
+                if (s_clock < 0)
+                {
+                    using (System.Security.Cryptography.RNGCryptoServiceProvider cryptoServiceProvider = new System.Security.Cryptography.RNGCryptoServiceProvider())
+                    {
+                        Byte[] clockInit = new Byte[4];
+                        cryptoServiceProvider.GetBytes(clockInit);
+                        s_clock = BitConverter.ToInt32(clockInit, 0) & 0x3FFF;
+                        s_clock |= 0x8000;
+                    }
+                }
+            }
+
+            Int32 result;
+            lock (s_clockLock)
+            {
+                result = s_clock++;
+                if (s_clock >= 0xC000)
+                    s_clock = 0x8000;
+            }
+
+            return BitConverter.GetBytes((Int16)result);
+        }
+
+        /// <summary>
+        /// Initialises a new GUID/UUID based on Version 1 (date-time and MAC address), based on the given date and time.
+        /// </summary>
+        /// <param name="dateTime">Given Date and Time</param>
+        /// <returns>A new Guid object</returns>
+        public static Guid NewUUIDv1(DateTime dateTime)
+        {
+            return NewUUIDv1(dateTime, GetClockSequence(), GetNodeID());
+        }
+
+        /// <summary>
+        /// Initialises a new GUID/UUID based on Version 1 (date-time and MAC address), based on the given Node ID.
+        /// </summary>
+        /// <param name="nodeID">Given 48-bit Node ID</param>
+        /// <returns>A new Guid object</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentException"></exception>
+        public static Guid NewUUIDv1(Byte[] nodeID)
+        {
+            return NewUUIDv1(DateTime.UtcNow, GetClockSequence(), nodeID);
+        }
+
+        /// <summary>
+        /// Initialises a new GUID/UUID based on Version 1 (date-time and MAC address), based on the given date and time, Clock Sequence with Variant and Node ID.
+        /// </summary>
+        /// <param name="dateTime">Given Date and Time</param>
+        /// <param name="clockSequence">Given 16-bit Clock Sequence with Variant</param>
+        /// <param name="nodeID">Given 48-bit Node ID</param>
+        /// <returns>A new Guid object</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentException"></exception>
+        public static Guid NewUUIDv1(DateTime dateTime, Byte[] clockSequence, Byte[] nodeID)
+        {
+            if (clockSequence == null)
+                throw new ArgumentNullException(nameof(clockSequence));
+
+            if (clockSequence.Length < 2)
+                throw new ArgumentException(String.Format("Clock Sequence contains less than 16-bit: {0} bytes", clockSequence.Length), nameof(clockSequence));
+
+            if (nodeID == null)
+                throw new ArgumentNullException(nameof(nodeID));
+
+            if (nodeID.Length < 6)
+                throw new ArgumentException(String.Format("Node ID contains less than 48-bit: {0} bytes", nodeID.Length), nameof(nodeID));
+
+            TimeSpan timesince = dateTime.ToUniversalTime() - s_epoch.ToUniversalTime();
+            Int64 timeinterval = timesince.Ticks;
+
+            Byte[] time = BitConverter.GetBytes(timeinterval);
+
+            Byte[] hex = new Byte[16];
+
+            hex[0] = time[0];
+            hex[1] = time[1];
+            hex[2] = time[2];
+            hex[3] = time[3];
+
+            hex[4] = time[4];
+            hex[5] = time[5];
+
+            hex[6] = time[6];
+            hex[7] = (Byte)((time[7] & 0x0F) + 0x10);
+
+            hex[8] = clockSequence[0];
+            hex[9] = clockSequence[1];
+
+            hex[10] = nodeID[0];
+            hex[11] = nodeID[1];
+            hex[12] = nodeID[2];
+            hex[13] = nodeID[3];
+            hex[14] = nodeID[4];
+            hex[15] = nodeID[5];
+
+            Guid Id = new Guid(hex);
+
+            return Id;
+        }
     }
 }
