@@ -59,7 +59,8 @@ namespace XUnitTestProjectUUID
                 clock =>
                 {
                     Byte[] vs = UUIDUtil.UUIDv1.GetClockSequence();
-                    UInt16 key = BitConverter.ToUInt16(vs);
+                    Int16 networkorder = BitConverter.ToInt16(vs);
+                    UInt16 key = (UInt16)System.Net.IPAddress.NetworkToHostOrder(networkorder);
                     concurrentDictionary.TryAdd(key, true);
                 });
 
@@ -68,6 +69,26 @@ namespace XUnitTestProjectUUID
             foreach (UInt16 key in keys)
             {
                 Assert.InRange(key, 0x8000, 0xBFFF);
+            }
+        }
+
+        [Fact]
+        public void TestUUIDVariantField()
+        {
+            IList<char> expectedVariantField = new List<char>() { '8', '9', 'a', 'b' };
+
+            ConcurrentBag<String> concurrentBag = new ConcurrentBag<String>();
+            Int32 expectedMaxSequence = 0x4000;
+
+            Parallel.For(0, UInt16.MaxValue,
+                body =>
+                {
+                    concurrentBag.Add(UUIDUtil.UUIDv1.NewUUIDv1().ToString());
+                });
+
+            foreach (String value in concurrentBag)
+            {
+                Assert.Contains<char>(value[19], expectedVariantField);
             }
         }
 

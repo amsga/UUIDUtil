@@ -82,7 +82,7 @@ namespace UUIDUtil
                     s_clock = 0x8000;
             }
 
-            return BitConverter.GetBytes((Int16)result);
+            return BitConverter.GetBytes(System.Net.IPAddress.HostToNetworkOrder((Int16)result));
         }
 
         /// <summary>
