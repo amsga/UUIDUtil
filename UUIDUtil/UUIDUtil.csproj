@@ -1,19 +1,24 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>TensionDev.UUID</AssemblyName>
+    <RootNamespace>TensionDev.UUID</RootNamespace>
+    <PackageId>TensionDev.UUID</PackageId>
+    <Product>TensionDev.UUID</Product>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Authors>amsga</Authors>
+    <Company>TensionDev</Company>
+    <Authors>TensionDev amsga</Authors>
     <NeutralLanguage>en-SG</NeutralLanguage>
-    <Description>A project to store UUID functions within a library for future use.</Description>
-    <Copyright>Copyright (c) amsga 2021</Copyright>
+    <Description>A project to store various UUID functions within a library for future use.</Description>
+    <Copyright>Copyright (c) TensionDev 2021</Copyright>
     <PackageTags>UUID GUID</PackageTags>
     <PackageReleaseNotes>Initial Release with UUID / GUID Version 1</PackageReleaseNotes>
-    <PackageProjectUrl>https://github.com/amsga/UUIDUtil</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/amsga/UUIDUtil</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/TensionDev/UUIDUtil</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/TensionDev/UUIDUtil</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-	<Version>0.1.1-alpha</Version>
+	<Version>0.1.1-beta</Version>
     <AssemblyVersion>0.1.0.0</AssemblyVersion>
     <FileVersion>0.1.1.0</FileVersion>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>

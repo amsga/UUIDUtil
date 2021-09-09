@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace UUIDUtil
+namespace TensionDev.UUID
 {
     /// <summary>
     /// Class Library to generate Universally Unique Identifier (UUID) / Globally Unique Identifier (GUID) based on Version 1 (date-time and MAC address).

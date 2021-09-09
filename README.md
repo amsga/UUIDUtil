@@ -1,7 +1,7 @@
-# UUID Library
+# TensionDev.UUID
 
-[![.NET](https://github.com/amsga/UUIDUtil/actions/workflows/dotnet.yml/badge.svg)](https://github.com/amsga/UUIDUtil/actions/workflows/dotnet.yml)
-[![Package Release](https://github.com/amsga/UUIDUtil/actions/workflows/package-release.yml/badge.svg)](https://github.com/amsga/UUIDUtil/actions/workflows/package-release.yml)
+[![.NET](https://github.com/TensionDev/UUIDUtil/actions/workflows/dotnet.yml/badge.svg)](https://github.com/TensionDev/UUIDUtil/actions/workflows/dotnet.yml)
+[![Package Release](https://github.com/TensionDev/UUIDUtil/actions/workflows/package-release.yml/badge.svg)](https://github.com/TensionDev/UUIDUtil/actions/workflows/package-release.yml)
 
 A project to store UUID functions within a library for future use.
 This project references the following documents for implementation.

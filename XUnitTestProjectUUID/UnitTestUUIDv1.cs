@@ -19,7 +19,7 @@ namespace XUnitTestProjectUUID
                 expectedNodeIDs.Add(nic.GetPhysicalAddress().GetAddressBytes());
             }
 
-            byte[] nodeID = UUIDUtil.UUIDv1.GetNodeID();
+            byte[] nodeID = TensionDev.UUID.UUIDv1.GetNodeID();
 
             if (nics.Length > 0)
                 Assert.Contains(nodeID, expectedNodeIDs);
@@ -30,8 +30,8 @@ namespace XUnitTestProjectUUID
         [Fact]
         public void TestConsistentGetNodeID()
         {
-            byte[] nodeID1 = UUIDUtil.UUIDv1.GetNodeID();
-            byte[] nodeID2 = UUIDUtil.UUIDv1.GetNodeID();
+            byte[] nodeID1 = TensionDev.UUID.UUIDv1.GetNodeID();
+            byte[] nodeID2 = TensionDev.UUID.UUIDv1.GetNodeID();
 
             Assert.Equal(nodeID1, nodeID2);
         }
@@ -44,7 +44,7 @@ namespace XUnitTestProjectUUID
             byte[] nodeID = new byte[] { 0x02, 0x42, 0xac, 0x13, 0x00, 0x03 };
             byte[] clockSequence = new byte[] { 0x82, 0xa8 };
             DateTime dateTime = DateTime.Parse("2021-09-03T05:37:54.619630Z");
-            Guid uuid = UUIDUtil.UUIDv1.NewUUIDv1(dateTime, clockSequence, nodeID);
+            Guid uuid = TensionDev.UUID.UUIDv1.NewUUIDv1(dateTime, clockSequence, nodeID);
 
             Assert.Equal(expectedUUID, uuid);
         }
@@ -58,7 +58,7 @@ namespace XUnitTestProjectUUID
             Parallel.For(0, UInt16.MaxValue,
                 clock =>
                 {
-                    Byte[] vs = UUIDUtil.UUIDv1.GetClockSequence();
+                    Byte[] vs = TensionDev.UUID.UUIDv1.GetClockSequence();
                     Int16 networkorder = BitConverter.ToInt16(vs);
                     UInt16 key = (UInt16)System.Net.IPAddress.NetworkToHostOrder(networkorder);
                     concurrentDictionary.TryAdd(key, true);
@@ -78,12 +78,11 @@ namespace XUnitTestProjectUUID
             IList<char> expectedVariantField = new List<char>() { '8', '9', 'a', 'b' };
 
             ConcurrentBag<String> concurrentBag = new ConcurrentBag<String>();
-            Int32 expectedMaxSequence = 0x4000;
 
             Parallel.For(0, UInt16.MaxValue,
                 body =>
                 {
-                    concurrentBag.Add(UUIDUtil.UUIDv1.NewUUIDv1().ToString());
+                    concurrentBag.Add(TensionDev.UUID.UUIDv1.NewUUIDv1().ToString());
                 });
 
             foreach (String value in concurrentBag)
@@ -97,7 +96,7 @@ namespace XUnitTestProjectUUID
         {
             byte[] nodeID = new byte[] { 0x02, 0x42, 0xac, 0x13, 0x00, 0x03 };
             byte[] clockSequence = null;
-            Assert.Throws<ArgumentNullException>(() => UUIDUtil.UUIDv1.NewUUIDv1(DateTime.UtcNow, clockSequence, nodeID));
+            Assert.Throws<ArgumentNullException>(() => TensionDev.UUID.UUIDv1.NewUUIDv1(DateTime.UtcNow, clockSequence, nodeID));
         }
 
         [Fact]
@@ -105,7 +104,7 @@ namespace XUnitTestProjectUUID
         {
             byte[] nodeID = new byte[] { 0x02, 0x42, 0xac, 0x13, 0x00, 0x03 };
             byte[] clockSequence = new byte[] { 0x82 };
-            Assert.Throws<ArgumentException>(() => UUIDUtil.UUIDv1.NewUUIDv1(DateTime.UtcNow, clockSequence, nodeID));
+            Assert.Throws<ArgumentException>(() => TensionDev.UUID.UUIDv1.NewUUIDv1(DateTime.UtcNow, clockSequence, nodeID));
         }
 
         [Fact]
@@ -113,7 +112,7 @@ namespace XUnitTestProjectUUID
         {
             byte[] nodeID = null;
             byte[] clockSequence = new byte[] { 0x82, 0xa8 };
-            Assert.Throws<ArgumentNullException>(() => UUIDUtil.UUIDv1.NewUUIDv1(DateTime.UtcNow, clockSequence, nodeID));
+            Assert.Throws<ArgumentNullException>(() => TensionDev.UUID.UUIDv1.NewUUIDv1(DateTime.UtcNow, clockSequence, nodeID));
         }
 
         [Fact]
@@ -121,7 +120,7 @@ namespace XUnitTestProjectUUID
         {
             byte[] nodeID = new byte[] { 0x02, 0x42, 0xac, 0x13 };
             byte[] clockSequence = new byte[] { 0x82, 0xa8 };
-            Assert.Throws<ArgumentException>(() => UUIDUtil.UUIDv1.NewUUIDv1(DateTime.UtcNow, clockSequence, nodeID));
+            Assert.Throws<ArgumentException>(() => TensionDev.UUID.UUIDv1.NewUUIDv1(DateTime.UtcNow, clockSequence, nodeID));
         }
     }
 }
