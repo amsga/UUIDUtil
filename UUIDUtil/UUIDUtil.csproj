@@ -18,7 +18,7 @@
     <PackageProjectUrl>https://github.com/TensionDev/UUIDUtil</PackageProjectUrl>
     <RepositoryUrl>https://github.com/TensionDev/UUIDUtil</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-	<Version>0.1.1-beta</Version>
+	<Version>0.1.1</Version>
     <AssemblyVersion>0.1.0.0</AssemblyVersion>
     <FileVersion>0.1.1.0</FileVersion>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>

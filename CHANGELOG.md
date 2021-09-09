@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.1.1] - 2021-09-10
+[v0.1.1](https://github.com/TensionDev/UUIDUtil/releases/tag/v0.1.1)
+
+### Changed
+- Changed Namespace from UUIDUtil to TensionDev.UUID to reflect official prefix for Package Id.
+
 
 ## [v0.1.1-alpha] - 2021-09-08
 [v0.1.1-alpha](https://github.com/TensionDev/UUIDUtil/releases/tag/v0.1.1-alpha)
