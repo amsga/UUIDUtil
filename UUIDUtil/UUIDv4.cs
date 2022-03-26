@@ -10,8 +10,8 @@ namespace TensionDev.UUID
         /// <summary>
         /// Initialises a new GUID/UUID based on Version 4 (random)
         /// </summary>
-        /// <returns>A new Guid object</returns>
-        public static Guid NewUUIDv4()
+        /// <returns>A new Uuid object</returns>
+        public static Uuid NewUUIDv4()
         {
             Byte[] time = new Byte[8];
             Byte[] clockSequence = new Byte[2];
@@ -26,16 +26,16 @@ namespace TensionDev.UUID
 
             Byte[] hex = new Byte[16];
 
-            hex[0] = time[0];
-            hex[1] = time[1];
-            hex[2] = time[2];
-            hex[3] = time[3];
+            hex[0] = time[4];
+            hex[1] = time[5];
+            hex[2] = time[6];
+            hex[3] = time[7];
 
-            hex[4] = time[4];
-            hex[5] = time[5];
+            hex[4] = time[2];
+            hex[5] = time[3];
 
-            hex[6] = time[6];
-            hex[7] = (Byte)((time[7] & 0x0F) + 0x40);
+            hex[6] = (Byte)((time[0] & 0x0F) + 0x40);
+            hex[7] = time[1];
 
             hex[8] = (Byte)((clockSequence[0] & 0x3F) + 0x80);
             hex[9] = clockSequence[1];
@@ -47,7 +47,7 @@ namespace TensionDev.UUID
             hex[14] = nodeID[4];
             hex[15] = nodeID[5];
 
-            Guid Id = new Guid(hex);
+            Uuid Id = new Uuid(hex);
 
             return Id;
         }

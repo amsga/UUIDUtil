@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.0.0] - 2022-03-26
+[v1.0.0](https://github.com/TensionDev/UUIDUtil/releases/tag/v1.0.0)
+
+### Added
+- Added TensionDev.UUID.Uuid as an implementation based on RFC 4122.
+- Added UUID v3 generated based on MD5, System.Security.Cryptography.MD5.
+- Added UUID v5 generated based on SHA-1, System.Security.Cryptography.SHA1.
+
+### Removed
+- Changed implementation from System.Guid to TensionDev.UUID.Uuid.
+
+
 ## [v0.2.0] - 2021-09-10
 [v0.2.0](https://github.com/TensionDev/UUIDUtil/releases/tag/v0.2.0)
 

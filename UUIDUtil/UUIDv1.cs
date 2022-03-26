@@ -17,8 +17,8 @@ namespace TensionDev.UUID
         /// <summary>
         /// Initialises a new GUID/UUID based on Version 1 (date-time and MAC address)
         /// </summary>
-        /// <returns>A new Guid object</returns>
-        public static Guid NewUUIDv1()
+        /// <returns>A new Uuid object</returns>
+        public static Uuid NewUUIDv1()
         {
             return NewUUIDv1(DateTime.UtcNow);
         }
@@ -89,8 +89,8 @@ namespace TensionDev.UUID
         /// Initialises a new GUID/UUID based on Version 1 (date-time and MAC address), based on the given date and time.
         /// </summary>
         /// <param name="dateTime">Given Date and Time</param>
-        /// <returns>A new Guid object</returns>
-        public static Guid NewUUIDv1(DateTime dateTime)
+        /// <returns>A new Uuid object</returns>
+        public static Uuid NewUUIDv1(DateTime dateTime)
         {
             return NewUUIDv1(dateTime, GetClockSequence(), GetNodeID());
         }
@@ -99,10 +99,10 @@ namespace TensionDev.UUID
         /// Initialises a new GUID/UUID based on Version 1 (date-time and MAC address), based on the given Node ID.
         /// </summary>
         /// <param name="nodeID">Given 48-bit Node ID</param>
-        /// <returns>A new Guid object</returns>
+        /// <returns>A new Uuid object</returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException"></exception>
-        public static Guid NewUUIDv1(Byte[] nodeID)
+        public static Uuid NewUUIDv1(Byte[] nodeID)
         {
             return NewUUIDv1(DateTime.UtcNow, GetClockSequence(), nodeID);
         }
@@ -113,10 +113,10 @@ namespace TensionDev.UUID
         /// <param name="dateTime">Given Date and Time</param>
         /// <param name="clockSequence">Given 16-bit Clock Sequence with Variant</param>
         /// <param name="nodeID">Given 48-bit Node ID</param>
-        /// <returns>A new Guid object</returns>
+        /// <returns>A new Uuid object</returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException"></exception>
-        public static Guid NewUUIDv1(DateTime dateTime, Byte[] clockSequence, Byte[] nodeID)
+        public static Uuid NewUUIDv1(DateTime dateTime, Byte[] clockSequence, Byte[] nodeID)
         {
             if (clockSequence == null)
                 throw new ArgumentNullException(nameof(clockSequence));
@@ -133,20 +133,20 @@ namespace TensionDev.UUID
             TimeSpan timesince = dateTime.ToUniversalTime() - s_epoch.ToUniversalTime();
             Int64 timeinterval = timesince.Ticks;
 
-            Byte[] time = BitConverter.GetBytes(timeinterval);
+            Byte[] time = BitConverter.GetBytes(System.Net.IPAddress.HostToNetworkOrder(timeinterval));
 
             Byte[] hex = new Byte[16];
 
-            hex[0] = time[0];
-            hex[1] = time[1];
-            hex[2] = time[2];
-            hex[3] = time[3];
+            hex[0] = time[4];
+            hex[1] = time[5];
+            hex[2] = time[6];
+            hex[3] = time[7];
 
-            hex[4] = time[4];
-            hex[5] = time[5];
+            hex[4] = time[2];
+            hex[5] = time[3];
 
-            hex[6] = time[6];
-            hex[7] = (Byte)((time[7] & 0x0F) + 0x10);
+            hex[6] = (Byte)((time[0] & 0x0F) + 0x10);
+            hex[7] = time[1];
 
             hex[8] = clockSequence[0];
             hex[9] = clockSequence[1];
@@ -158,7 +158,7 @@ namespace TensionDev.UUID
             hex[14] = nodeID[4];
             hex[15] = nodeID[5];
 
-            Guid Id = new Guid(hex);
+            Uuid Id = new Uuid(hex);
 
             return Id;
         }

@@ -39,12 +39,12 @@ namespace XUnitTestProjectUUID
         [Fact]
         public void TestNewUUIDv1()
         {
-            Guid expectedUUID = new Guid("164a714c-0c79-11ec-82a8-0242ac130003");
+            TensionDev.UUID.Uuid expectedUUID = new TensionDev.UUID.Uuid("164a714c-0c79-11ec-82a8-0242ac130003");
 
             byte[] nodeID = new byte[] { 0x02, 0x42, 0xac, 0x13, 0x00, 0x03 };
             byte[] clockSequence = new byte[] { 0x82, 0xa8 };
             DateTime dateTime = DateTime.Parse("2021-09-03T05:37:54.619630Z");
-            Guid uuid = TensionDev.UUID.UUIDv1.NewUUIDv1(dateTime, clockSequence, nodeID);
+            TensionDev.UUID.Uuid uuid = TensionDev.UUID.UUIDv1.NewUUIDv1(dateTime, clockSequence, nodeID);
 
             Assert.Equal(expectedUUID, uuid);
         }
