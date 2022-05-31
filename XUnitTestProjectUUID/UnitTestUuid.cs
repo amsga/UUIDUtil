@@ -200,6 +200,36 @@ namespace XUnitTestProjectUUID
         }
 
         [Fact]
+        public void TestToGuid()
+        {
+            Guid expected = new Guid("7d444840-9dc0-11d1-b245-5ffdce74fad2");
+            TensionDev.UUID.Uuid uuid = new TensionDev.UUID.Uuid("7d444840-9dc0-11d1-b245-5ffdce74fad2");
+
+            Guid actual = uuid.ToGuid();
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void TestToVariant2()
+        {
+            Guid expected = new Guid("7d444840-9dc0-11d1-d245-5ffdce74fad2");
+            TensionDev.UUID.Uuid uuid = new TensionDev.UUID.Uuid("7d444840-9dc0-11d1-b245-5ffdce74fad2");
+
+            Guid actual = uuid.ToVariant2();
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void TestToVariant1()
+        {
+            TensionDev.UUID.Uuid expected = new TensionDev.UUID.Uuid("7d444840-9dc0-11d1-9245-5ffdce74fad2");
+            Guid guid = new Guid("7d444840-9dc0-11d1-d245-5ffdce74fad2");
+
+            TensionDev.UUID.Uuid actual = TensionDev.UUID.Uuid.ToVariant1(guid);
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
         public void TestToString1()
         {
             string expected = "7d444840-9dc0-11d1-b245-5ffdce74fad2";

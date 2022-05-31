@@ -318,6 +318,45 @@ namespace TensionDev.UUID
         }
 
         /// <summary>
+        /// Returns the System.Guid equivalent of this instance.
+        /// </summary>
+        /// <returns>A System.Guid object.</returns>
+        public Guid ToGuid()
+        {
+            return new Guid(ToString());
+        }
+
+        /// <summary>
+        /// Return the Variant 2 version in System.Guid.
+        /// </summary>
+        /// <returns>A System.Guid object.</returns>
+        public Guid ToVariant2()
+        {
+            byte newClockSeq = (byte)(_clock_seq_hi_and_reserved & 0x1F);
+            newClockSeq = (byte)(newClockSeq | 0xC0);
+            Uuid variant2 = new Uuid(this.ToByteArray());
+
+            variant2._clock_seq_hi_and_reserved = newClockSeq;
+
+            return variant2.ToGuid();
+        }
+
+        /// <summary>
+        /// Returns the Variant 1 version in TensionDev.UUID.Uuid.
+        /// </summary>
+        /// <param name="guid">The System.Guid object to convert.</param>
+        /// <returns>A TensionDev.UUID.Uuid object.</returns>
+        public static Uuid ToVariant1(Guid guid)
+        {
+            Uuid variant1 = new Uuid(guid.ToString());
+            byte newClockSeq = (byte)(variant1._clock_seq_hi_and_reserved & 0x3F);
+            newClockSeq = (byte)(newClockSeq | 0x80);
+            variant1._clock_seq_hi_and_reserved = newClockSeq;
+
+            return variant1;
+        }
+
+        /// <summary>
         /// Returns a string representation of the value of this instance as per RFC 4122 Section 3.
         /// </summary>
         /// <returns>The value of this Uuid, formatted by using the "D" format specifier as follows:
