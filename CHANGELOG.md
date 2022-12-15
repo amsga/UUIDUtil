@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.2.0-alpha] - 2022-12-15
+[v1.2.0-alpha](https://github.com/TensionDev/UUIDUtil/releases/tag/v1.2.0-alpha)
+
+### Added
+- Added UUID v6 generated based on current system date and time as well as local Network MAC Address.
+- Added UUID v6 generated based on current system date and time as well as supplied Network MAC Address.
+- Added UUID v6 generated based on supplied system date and time as well as local Network MAC Address.
+- Added UUID v6 generated based on supplied system date and time as well as supplied Network MAC Address.
+- Added UUID v7 generated based on current system date and time as well as generated random fields.
+- Added UUID v7 generated based on supplied system date and time as well as generated random fields.
+- Added UUID v7 generated based on supplied system date and time as well as supplied random fields.
+
+
 ## [v1.1.0] - 2022-05-31
 [v1.1.0](https://github.com/TensionDev/UUIDUtil/releases/tag/v1.1.0)
 

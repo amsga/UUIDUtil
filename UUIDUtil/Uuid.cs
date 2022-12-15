@@ -18,6 +18,11 @@ namespace TensionDev.UUID
         /// </summary>
         public static readonly Uuid Empty = new Uuid();
 
+        /// <summary>
+        /// A read-only instance of the Uuid object whose value is all ones.
+        /// </summary>
+        public static readonly Uuid Max = new Uuid(uint.MaxValue, ushort.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, new byte[]  { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff});
+
         public Uuid()
         {
             _time_low = 0;
