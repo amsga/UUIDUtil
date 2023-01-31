@@ -10,3 +10,4 @@ This project references the following documents for implementation.
 - [MySQL :: MySQL 8.0 Reference Manual :: 12.24 Miscellaneous Functions](https://dev.mysql.com/doc/refman/8.0/en/miscellaneous-functions.html#function_uuid)
 - [rfc4122](https://datatracker.ietf.org/doc/html/rfc4122)
 - [draft-peabody-dispatch-new-uuid-format-04](https://datatracker.ietf.org/doc/html/draft-peabody-dispatch-new-uuid-format)
+- [draft-ietf-uuidrev-rfc4122bis-01](https://datatracker.ietf.org/doc/html/draft-ietf-uuidrev-rfc4122bis)
