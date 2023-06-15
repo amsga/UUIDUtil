@@ -8,6 +8,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v2.1.0-alpha] - 2023-06-15
+[v2.1.0-alpha](https://github.com/TensionDev/UUIDUtil/releases/tag/v2.1.0-alpha)
+
+### Changed
+- Changed license from GNU General Public License Version 3 to Apache License Version 2.0.
+
+
+## [v2.0.0] - 2023-06-15
+[v2.0.0](https://github.com/TensionDev/UUIDUtil/releases/tag/v2.0.0)
+
+### Changed
+- Changed license from GNU General Public License Version 3 to Apache License Version 2.0.
+
+
 ## [v1.2.0-alpha] - 2022-12-15
 [v1.2.0-alpha](https://github.com/TensionDev/UUIDUtil/releases/tag/v1.2.0-alpha)
 
