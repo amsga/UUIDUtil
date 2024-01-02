@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
 ## [v2.1.0-alpha] - 2023-06-15
 [v2.1.0-alpha](https://github.com/TensionDev/UUIDUtil/releases/tag/v2.1.0-alpha)
 
