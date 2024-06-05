@@ -15,6 +15,7 @@
 //   limitations under the License.
 
 using System;
+using System.Threading;
 
 namespace TensionDev.UUID
 {
@@ -23,45 +24,35 @@ namespace TensionDev.UUID
     /// </summary>
     public class UUIDv7
     {
-        protected internal static DateTime s_epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        protected internal static readonly DateTime s_epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+        protected internal static UInt16 s_counter = 0;
+        protected internal static readonly Object s_counterLock = new Object();
+
+        public enum GenerationMethod
+        {
+            /// <summary>
+            /// Random bits for the remaining 74 bits. 
+            /// </summary>
+            Random = 0,
+            /// <summary>
+            /// Fixed Bit-Length Dedicated Counter (Method 1)
+            /// </summary>
+            Method1 = 1,
+            //Method2 = 2,
+            /// <summary>
+            /// Replace Leftmost Random Bits with Increased Clock Precision (Method 3)
+            /// </summary>
+            Method3 = 3,
+        }
 
         /// <summary>
         /// Initialises a new GUID/UUID based on Version 7 (date-time)
         /// </summary>
         /// <returns>A new Uuid object</returns>
-        public static Uuid NewUUIDv7()
+        public static Uuid NewUUIDv7(GenerationMethod method = GenerationMethod.Random)
         {
-            return NewUUIDv7(DateTime.UtcNow);
-        }
-
-        /// <summary>
-        /// Initialises the 12-bit rand_a and returns it.<br />
-        /// Returns a randomly genrated 16-bit rand_a.
-        /// </summary>
-        /// <returns>A byte-array representing the 16-bit rand_a</returns>
-        public static Byte[] GetRandomA()
-        {
-            using (System.Security.Cryptography.RNGCryptoServiceProvider cryptoServiceProvider = new System.Security.Cryptography.RNGCryptoServiceProvider())
-            {
-                Byte[] fakeNode = new Byte[2];
-                cryptoServiceProvider.GetBytes(fakeNode);
-                return fakeNode;
-            }
-        }
-
-        /// <summary>
-        /// Initialises the 62-bit rand_b and returns it.<br />
-        /// Returns a randomly genrated 64-bit rand_b.
-        /// </summary>
-        /// <returns>A byte-array representing the 64-bit rand_b</returns>
-        public static Byte[] GetRandomB()
-        {
-            using (System.Security.Cryptography.RNGCryptoServiceProvider cryptoServiceProvider = new System.Security.Cryptography.RNGCryptoServiceProvider())
-            {
-                Byte[] fakeNode = new Byte[8];
-                cryptoServiceProvider.GetBytes(fakeNode);
-                return fakeNode;
-            }
+            return NewUUIDv7(DateTime.UtcNow, method);
         }
 
         /// <summary>
@@ -69,9 +60,20 @@ namespace TensionDev.UUID
         /// </summary>
         /// <param name="dateTime">Given Date and Time</param>
         /// <returns>A new Uuid object</returns>
-        public static Uuid NewUUIDv7(DateTime dateTime)
+        public static Uuid NewUUIDv7(DateTime dateTime, GenerationMethod method = GenerationMethod.Random)
         {
-            return NewUUIDv7(dateTime, GetRandomA(), GetRandomB());
+            switch (method)
+            {
+                default:
+                case GenerationMethod.Random:
+                    return NewUUIDv7(dateTime, GetRandomA(), GetRandomB());
+
+                case GenerationMethod.Method1:
+                    return NewUUIDv7(dateTime, GetFixedBitLengthDedicatedCounterA(), GetRandomB());
+
+                case GenerationMethod.Method3:
+                    return NewUUIDv7(dateTime, GetIncreasedClockPrecisionA(dateTime), GetRandomB());
+            }
         }
 
         /// <summary>
@@ -97,10 +99,10 @@ namespace TensionDev.UUID
             if (randomB.Length < 8)
                 throw new ArgumentException(String.Format("rand_b contains less than 64-bit: {0} bytes", randomB.Length), nameof(randomB));
 
-            TimeSpan timesince = dateTime.ToUniversalTime() - s_epoch.ToUniversalTime();
-            Int64 timeinterval = ((Int64)timesince.TotalMilliseconds) << 16;
+            TimeSpan timeSince = dateTime.ToUniversalTime() - s_epoch.ToUniversalTime();
+            Int64 timeInterval = ((Int64)timeSince.TotalMilliseconds) << 16;
 
-            Byte[] time = BitConverter.GetBytes(System.Net.IPAddress.HostToNetworkOrder(timeinterval));
+            Byte[] time = BitConverter.GetBytes(System.Net.IPAddress.HostToNetworkOrder(timeInterval));
 
             Byte[] hex = new Byte[16];
 
@@ -127,6 +129,75 @@ namespace TensionDev.UUID
             Uuid Id = new Uuid(hex);
 
             return Id;
+        }
+
+        /// <summary>
+        /// Initialises the 12-bit rand_a and returns it.<br />
+        /// Returns a randomly genrated 16-bit rand_a.
+        /// </summary>
+        /// <returns>A byte-array representing the 16-bit rand_a</returns>
+        public static Byte[] GetRandomA()
+        {
+            using (System.Security.Cryptography.RNGCryptoServiceProvider cryptoServiceProvider = new System.Security.Cryptography.RNGCryptoServiceProvider())
+            {
+                Byte[] fakeNode = new Byte[2];
+                cryptoServiceProvider.GetBytes(fakeNode);
+                return fakeNode;
+            }
+        }
+
+        /// <summary>
+        /// Initialises the 12-bit rand_a based on Method 1 in Section 6.2 and returns it.<br />
+        /// Returns a Fixed-Length Dedicated Counter 16-bit rand_a.
+        /// </summary>
+        /// <returns>A byte-array representing the 16-bit rand_a</returns>
+        public static Byte[] GetFixedBitLengthDedicatedCounterA()
+        {
+            lock (s_counterLock)
+            {
+                Int16 value = Convert.ToInt16(s_counter);
+                Byte[] counter = BitConverter.GetBytes(System.Net.IPAddress.HostToNetworkOrder(value));
+
+                ++s_counter;
+                if (s_counter >= 0x1000)
+                    s_counter = 0;
+
+                return counter;
+            }
+        }
+
+        /// <summary>
+        /// Initialises the 12-bit rand_a based on Method 3 in Section 6.2 and returns it.<br />
+        /// Returns a Increased Clock Precision 16-bit rand_a.
+        /// </summary>
+        /// <param name="currentDateTime"></param>
+        /// <returns>A byte-array representing the 16-bit rand_a</returns>
+        public static Byte[] GetIncreasedClockPrecisionA(DateTime currentDateTime)
+        {
+            TimeSpan timeSince = currentDateTime.ToUniversalTime() - s_epoch.ToUniversalTime();
+            Int64 timeInterval = ((Int64)timeSince.TotalMilliseconds);
+            Double precisionInterval = timeSince.TotalMilliseconds - timeInterval;
+            Int16 precisionA = (Int16)Math.Floor(precisionInterval * 0x1000);
+
+            Byte[] bytes = BitConverter.GetBytes(System.Net.IPAddress.HostToNetworkOrder(precisionA));
+
+            return bytes;
+
+        }
+
+        /// <summary>
+        /// Initialises the 62-bit rand_b and returns it.<br />
+        /// Returns a randomly genrated 64-bit rand_b.
+        /// </summary>
+        /// <returns>A byte-array representing the 64-bit rand_b</returns>
+        public static Byte[] GetRandomB()
+        {
+            using (System.Security.Cryptography.RNGCryptoServiceProvider cryptoServiceProvider = new System.Security.Cryptography.RNGCryptoServiceProvider())
+            {
+                Byte[] fakeNode = new Byte[8];
+                cryptoServiceProvider.GetBytes(fakeNode);
+                return fakeNode;
+            }
         }
     }
 }

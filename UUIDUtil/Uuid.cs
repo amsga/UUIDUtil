@@ -20,7 +20,7 @@ using System.Text.RegularExpressions;
 
 namespace TensionDev.UUID
 {
-    public class Uuid : IComparable<Uuid>, IEquatable<Uuid>
+    public sealed class Uuid : IComparable<Uuid>, IEquatable<Uuid>
     {
         private uint _time_low;
         private ushort _time_mid;
@@ -162,8 +162,8 @@ namespace TensionDev.UUID
                 throw new ArgumentException("f is not 6 bytes long");
 
             _time_low = (uint)System.Net.IPAddress.HostToNetworkOrder((int)a);
-            _time_mid = (ushort)System.Net.IPAddress.HostToNetworkOrder((short)b);
-            _time_hi_and_version = (ushort)System.Net.IPAddress.HostToNetworkOrder((short)c);
+            _time_mid = (ushort)System.Net.IPAddress.HostToNetworkOrder((Int16)b);
+            _time_hi_and_version = (ushort)System.Net.IPAddress.HostToNetworkOrder((Int16)c);
             _clock_seq_hi_and_reserved = d;
             _clock_seq_low = e;
             f.CopyTo(_node, 0);
@@ -186,8 +186,8 @@ namespace TensionDev.UUID
         public Uuid(uint a, ushort b, ushort c, byte d, byte e, byte f, byte g, byte h, byte i, byte j, byte k) : this()
         {
             _time_low = (uint)System.Net.IPAddress.HostToNetworkOrder((int)a);
-            _time_mid = (ushort)System.Net.IPAddress.HostToNetworkOrder((short)b);
-            _time_hi_and_version = (ushort)System.Net.IPAddress.HostToNetworkOrder((short)c);
+            _time_mid = (ushort)System.Net.IPAddress.HostToNetworkOrder((Int16)b);
+            _time_hi_and_version = (ushort)System.Net.IPAddress.HostToNetworkOrder((Int16)c);
             _clock_seq_hi_and_reserved = d;
             _clock_seq_low = e;
             _node[0] = f;
@@ -233,6 +233,7 @@ namespace TensionDev.UUID
             }
             catch (Exception)
             {
+                // Quietly suppress exception on Parse.
             }
 
             return vs;
@@ -297,11 +298,11 @@ namespace TensionDev.UUID
         /// <summary>
         /// Returns a value that indicates whether this instance is equal to a specified object.
         /// </summary>
-        /// <param name="o">The object to compare with this instance.</param>
+        /// <param name="obj">The object to compare with this instance.</param>
         /// <returns>true if o is a Uuid that has the same value as this instance; otherwise,false.</returns>
-        public override bool Equals(object o)
+        public override bool Equals(object obj)
         {
-            if (o is Uuid other)
+            if (obj is Uuid other)
             {
                 return Equals(other);
             }
@@ -483,10 +484,10 @@ namespace TensionDev.UUID
         /// <returns>true if a and b are equal; otherwise, false.</returns>
         public static bool operator ==(Uuid a, Uuid b)
         {
-            if (a == null && b == null)
+            if (a is null && b is null)
                 return true;
 
-            if (a == null || b == null)
+            if (a is null || b is null)
                 return false;
 
             return a.Equals(b);
@@ -501,6 +502,26 @@ namespace TensionDev.UUID
         public static bool operator !=(Uuid a, Uuid b)
         {
             return !(a == b);
+        }
+
+        public static bool operator <(Uuid a, Uuid b)
+        {
+            return a.CompareTo(b) < 0;
+        }
+
+        public static bool operator >(Uuid a, Uuid b)
+        {
+            return a.CompareTo(b) > 0;
+        }
+
+        public static bool operator <=(Uuid a, Uuid b)
+        {
+            return a.CompareTo(b) <= 0;
+        }
+
+        public static bool operator >=(Uuid a, Uuid b)
+        {
+            return a.CompareTo(b) >= 0;
         }
     }
 }

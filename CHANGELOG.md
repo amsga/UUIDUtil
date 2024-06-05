@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## [v2.1.0-beta] - 2024-06-05
+[v2.1.0-beta](https://github.com/TensionDev/UUIDUtil/releases/tag/v2.1.0-beta)
+
+### Changed
+- Added UUID v7 generated based on current system date and time as well as Fixed Bit-Length Dedicated Counter (Method 1).
+- Added UUID v7 generated based on current system date and time as well as Replace Leftmost Random Bits with Increased Clock Precision (Method 3).
+
+
 ## [v2.1.0-alpha] - 2023-06-15
 [v2.1.0-alpha](https://github.com/TensionDev/UUIDUtil/releases/tag/v2.1.0-alpha)
 

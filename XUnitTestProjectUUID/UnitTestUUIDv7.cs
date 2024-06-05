@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -13,7 +14,7 @@ namespace XUnitTestProjectUUID
         {
             byte[] randA = TensionDev.UUID.UUIDv7.GetRandomA();
 
-            Assert.True(randA.Length == 2);
+            Assert.Equal(2, randA.Length);
         }
 
         [Fact]
@@ -26,11 +27,84 @@ namespace XUnitTestProjectUUID
         }
 
         [Fact]
+        public void TestGetFixedBitLengthDedicatedCounterA()
+        {
+            byte[] counterA = TensionDev.UUID.UUIDv7.GetFixedBitLengthDedicatedCounterA();
+
+            Assert.Equal(2, counterA.Length);
+        }
+
+        [Fact]
+        public void TestUniqueGetFixedBitLengthDedicatedCounterA()
+        {
+            ConcurrentBag<Byte[]> countersA = new ConcurrentBag<Byte[]>();
+
+            Parallel.For(0, 0x1000,
+                counter =>
+                {
+                    countersA.Add(TensionDev.UUID.UUIDv7.GetFixedBitLengthDedicatedCounterA());
+                });
+
+            IEnumerable<Byte[]> distinctCounters = countersA.Distinct();
+
+            Assert.Equal(distinctCounters.Count(), countersA.Count);
+            Assert.Equal(0x1000, distinctCounters.Count());
+            Assert.Equal(0x1000, countersA.Count);
+        }
+
+        [Fact]
+        public void TestOverflowGetCounterA()
+        {
+            ConcurrentBag<Byte[]> countersA = new ConcurrentBag<Byte[]>();
+
+            Parallel.For(0, 0x4000,
+                counter =>
+                {
+                    countersA.Add(TensionDev.UUID.UUIDv7.GetFixedBitLengthDedicatedCounterA());
+                });
+
+            IEnumerable<Int16> distinctCounters = countersA.Select(m => BitConverter.ToInt16(m)).Distinct();
+
+            Assert.Equal(0x1000, distinctCounters.Count());
+            Assert.Equal(0x4000, countersA.Count);
+        }
+
+        [Fact]
+        public void TestGetIncreasedClockPrecisionA()
+        {
+            DateTime dateTime = DateTime.Now;
+            byte[] counterA = TensionDev.UUID.UUIDv7.GetIncreasedClockPrecisionA(dateTime);
+
+            Assert.Equal(2, counterA.Length);
+        }
+
+        [Fact]
+        public void TestOverflowGetIncreasedClockPrecisionA()
+        {
+            ConcurrentBag<Byte[]> countersA = new ConcurrentBag<Byte[]>();
+
+            DateTime start = DateTime.Now;
+            DateTime end = start.AddMilliseconds(1);
+
+            Parallel.For(start.Ticks, end.Ticks ,
+                ticks =>
+                {
+                    DateTime dateTime = new DateTime(ticks, DateTimeKind.Local);
+                    countersA.Add(TensionDev.UUID.UUIDv7.GetIncreasedClockPrecisionA(dateTime));
+                });
+
+            IEnumerable<Int16> distinctCounters = countersA.Select(m => BitConverter.ToInt16(m)).Distinct();
+
+            Assert.Equal(0x1000, distinctCounters.Count());
+            Assert.Equal(10000, countersA.Count);
+        }
+
+        [Fact]
         public void TestGetRandomB()
         {
             byte[] randB = TensionDev.UUID.UUIDv7.GetRandomB();
 
-            Assert.True(randB.Length == 8);
+            Assert.Equal(8, randB.Length);
         }
 
         [Fact]

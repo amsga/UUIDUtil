@@ -24,10 +24,10 @@ namespace TensionDev.UUID
     public class UUIDv6
     {
         protected internal static Int32 s_clock = Int32.MinValue;
-        protected internal static DateTime s_epoch = new DateTime(1582, 10, 15, 0, 0, 0, DateTimeKind.Utc);
+        protected internal static readonly DateTime s_epoch = new DateTime(1582, 10, 15, 0, 0, 0, DateTimeKind.Utc);
 
-        protected internal static Object s_initLock = new Object();
-        protected internal static Object s_clockLock = new Object();
+        protected internal static readonly Object s_initLock = new Object();
+        protected internal static readonly Object s_clockLock = new Object();
 
         /// <summary>
         /// Initialises a new GUID/UUID based on Version 6 (date-time)
@@ -36,53 +36,6 @@ namespace TensionDev.UUID
         public static Uuid NewUUIDv6()
         {
             return NewUUIDv6(DateTime.UtcNow);
-        }
-
-        /// <summary>
-        /// Initialises the 48-bit Node ID and returns it.<br />
-        /// Returns a randomly genrated 48-bit Node ID.
-        /// </summary>
-        /// <returns>A byte-array representing the 48-bit Node ID</returns>
-        public static Byte[] GetNodeID()
-        {
-            using (System.Security.Cryptography.RNGCryptoServiceProvider cryptoServiceProvider = new System.Security.Cryptography.RNGCryptoServiceProvider())
-            {
-                Byte[] fakeNode = new Byte[6];
-                cryptoServiceProvider.GetBytes(fakeNode);
-                return fakeNode;
-            }
-        }
-
-        /// <summary>
-        /// Intialises the 14-bit Clock Sequence and returns the current value with the Variant.<br />
-        /// Will return an incremented Clock Sequence on each call, modulo 14-bit.
-        /// </summary>
-        /// <returns>A byte-array representing the 14-bit Clock Sequence, together with the Variant</returns>
-        public static Byte[] GetClockSequence()
-        {
-            lock (s_initLock)
-            {
-                if (s_clock < 0)
-                {
-                    using (System.Security.Cryptography.RNGCryptoServiceProvider cryptoServiceProvider = new System.Security.Cryptography.RNGCryptoServiceProvider())
-                    {
-                        Byte[] clockInit = new Byte[4];
-                        cryptoServiceProvider.GetBytes(clockInit);
-                        s_clock = BitConverter.ToInt32(clockInit, 0) & 0x3FFF;
-                        s_clock |= 0x8000;
-                    }
-                }
-            }
-
-            Int32 result;
-            lock (s_clockLock)
-            {
-                result = s_clock++;
-                if (s_clock >= 0xC000)
-                    s_clock = 0x8000;
-            }
-
-            return BitConverter.GetBytes(System.Net.IPAddress.HostToNetworkOrder((Int16)result));
         }
 
         /// <summary>
@@ -130,10 +83,10 @@ namespace TensionDev.UUID
             if (nodeID.Length < 6)
                 throw new ArgumentException(String.Format("Node ID contains less than 48-bit: {0} bytes", nodeID.Length), nameof(nodeID));
 
-            TimeSpan timesince = dateTime.ToUniversalTime() - s_epoch.ToUniversalTime();
-            Int64 timeinterval = timesince.Ticks << 4;
+            TimeSpan timeSince = dateTime.ToUniversalTime() - s_epoch.ToUniversalTime();
+            Int64 timeInterval = timeSince.Ticks << 4;
 
-            Byte[] time = BitConverter.GetBytes(System.Net.IPAddress.HostToNetworkOrder(timeinterval));
+            Byte[] time = BitConverter.GetBytes(System.Net.IPAddress.HostToNetworkOrder(timeInterval));
 
             Byte[] hex = new Byte[16];
 
@@ -161,6 +114,53 @@ namespace TensionDev.UUID
             Uuid Id = new Uuid(hex);
 
             return Id;
+        }
+
+        /// <summary>
+        /// Initialises the 48-bit Node ID and returns it.<br />
+        /// Returns a randomly genrated 48-bit Node ID.
+        /// </summary>
+        /// <returns>A byte-array representing the 48-bit Node ID</returns>
+        public static Byte[] GetNodeID()
+        {
+            using (System.Security.Cryptography.RNGCryptoServiceProvider cryptoServiceProvider = new System.Security.Cryptography.RNGCryptoServiceProvider())
+            {
+                Byte[] fakeNode = new Byte[6];
+                cryptoServiceProvider.GetBytes(fakeNode);
+                return fakeNode;
+            }
+        }
+
+        /// <summary>
+        /// Intialises the 14-bit Clock Sequence and returns the current value with the Variant.<br />
+        /// Will return an incremented Clock Sequence on each call, modulo 14-bit.
+        /// </summary>
+        /// <returns>A byte-array representing the 14-bit Clock Sequence, together with the Variant</returns>
+        public static Byte[] GetClockSequence()
+        {
+            lock (s_initLock)
+            {
+                if (s_clock < 0)
+                {
+                    using (System.Security.Cryptography.RNGCryptoServiceProvider cryptoServiceProvider = new System.Security.Cryptography.RNGCryptoServiceProvider())
+                    {
+                        Byte[] clockInit = new Byte[4];
+                        cryptoServiceProvider.GetBytes(clockInit);
+                        s_clock = BitConverter.ToInt32(clockInit, 0) & 0x3FFF;
+                        s_clock |= 0x8000;
+                    }
+                }
+            }
+
+            Int32 result;
+            lock (s_clockLock)
+            {
+                result = s_clock++;
+                if (s_clock >= 0xC000)
+                    s_clock = 0x8000;
+            }
+
+            return BitConverter.GetBytes(System.Net.IPAddress.HostToNetworkOrder((Int16)result));
         }
     }
 }
