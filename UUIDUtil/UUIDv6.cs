@@ -19,11 +19,10 @@ using System;
 namespace TensionDev.UUID
 {
     /// <summary>
-    /// Class Library to generate Universally Unique Identifier (UUID) / Globally Unique Identifier (GUID) based on Version 1 (date-time and MAC address).
+    /// Class Library to generate Universally Unique Identifier (UUID) / Globally Unique Identifier (GUID) based on Version 6 (date-time).
     /// </summary>
-    public class UUIDv1
+    public class UUIDv6
     {
-        protected internal static System.Net.NetworkInformation.PhysicalAddress s_physicalAddress = System.Net.NetworkInformation.PhysicalAddress.None;
         protected internal static Int32 s_clock = Int32.MinValue;
         protected internal static readonly DateTime s_epoch = new DateTime(1582, 10, 15, 0, 0, 0, DateTimeKind.Utc);
 
@@ -31,38 +30,38 @@ namespace TensionDev.UUID
         protected internal static readonly Object s_clockLock = new Object();
 
         /// <summary>
-        /// Initialises a new GUID/UUID based on Version 1 (date-time and MAC address)
+        /// Initialises a new GUID/UUID based on Version 6 (date-time)
         /// </summary>
         /// <returns>A new Uuid object</returns>
-        public static Uuid NewUUIDv1()
+        public static Uuid NewUUIDv6()
         {
-            return NewUUIDv1(DateTime.UtcNow);
+            return NewUUIDv6(DateTime.UtcNow);
         }
 
         /// <summary>
-        /// Initialises a new GUID/UUID based on Version 1 (date-time and MAC address), based on the given date and time.
+        /// Initialises a new GUID/UUID based on Version 6 (date-time), based on the given date and time.
         /// </summary>
         /// <param name="dateTime">Given Date and Time</param>
         /// <returns>A new Uuid object</returns>
-        public static Uuid NewUUIDv1(DateTime dateTime)
+        public static Uuid NewUUIDv6(DateTime dateTime)
         {
-            return NewUUIDv1(dateTime, GetClockSequence(), GetNodeID());
+            return NewUUIDv6(dateTime, GetClockSequence(), GetNodeID());
         }
 
         /// <summary>
-        /// Initialises a new GUID/UUID based on Version 1 (date-time and MAC address), based on the given Node ID.
+        /// Initialises a new GUID/UUID based on Version 6 (date-time), based on the given Node ID.
         /// </summary>
         /// <param name="nodeID">Given 48-bit Node ID</param>
         /// <returns>A new Uuid object</returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException"></exception>
-        public static Uuid NewUUIDv1(Byte[] nodeID)
+        public static Uuid NewUUIDv6(Byte[] nodeID)
         {
-            return NewUUIDv1(DateTime.UtcNow, GetClockSequence(), nodeID);
+            return NewUUIDv6(DateTime.UtcNow, GetClockSequence(), nodeID);
         }
 
         /// <summary>
-        /// Initialises a new GUID/UUID based on Version 1 (date-time and MAC address), based on the given date and time, Clock Sequence with Variant and Node ID.
+        /// Initialises a new GUID/UUID based on Version 6 (date-time), based on the given date and time, Clock Sequence with Variant and Node ID.
         /// </summary>
         /// <param name="dateTime">Given Date and Time</param>
         /// <param name="clockSequence">Given 16-bit Clock Sequence with Variant</param>
@@ -70,7 +69,7 @@ namespace TensionDev.UUID
         /// <returns>A new Uuid object</returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException"></exception>
-        public static Uuid NewUUIDv1(DateTime dateTime, Byte[] clockSequence, Byte[] nodeID)
+        public static Uuid NewUUIDv6(DateTime dateTime, Byte[] clockSequence, Byte[] nodeID)
         {
             if (clockSequence == null)
                 throw new ArgumentNullException(nameof(clockSequence));
@@ -85,22 +84,22 @@ namespace TensionDev.UUID
                 throw new ArgumentException(String.Format("Node ID contains less than 48-bit: {0} bytes", nodeID.Length), nameof(nodeID));
 
             TimeSpan timeSince = dateTime.ToUniversalTime() - s_epoch.ToUniversalTime();
-            Int64 timeInterval = timeSince.Ticks;
+            Int64 timeInterval = timeSince.Ticks << 4;
 
             Byte[] time = BitConverter.GetBytes(System.Net.IPAddress.HostToNetworkOrder(timeInterval));
 
             Byte[] hex = new Byte[16];
 
-            hex[0] = time[4];
-            hex[1] = time[5];
-            hex[2] = time[6];
-            hex[3] = time[7];
+            hex[0] = time[0];
+            hex[1] = time[1];
+            hex[2] = time[2];
+            hex[3] = time[3];
 
-            hex[4] = time[2];
-            hex[5] = time[3];
+            hex[4] = time[4];
+            hex[5] = time[5];
 
-            hex[6] = (Byte)((time[0] & 0x0F) + 0x10);
-            hex[7] = time[1];
+            hex[6] = (Byte)(((time[6] >> 4) & 0x0F) + 0x60);
+            hex[7] = (Byte)((time[6] << 4) + (time[7] >> 4));
 
             hex[8] = clockSequence[0];
             hex[9] = clockSequence[1];
@@ -119,32 +118,17 @@ namespace TensionDev.UUID
 
         /// <summary>
         /// Initialises the 48-bit Node ID and returns it.<br />
-        /// Returns the MAC Address of a Network Interface Card, if available.
-        /// Otherwise, returns a randomly genrated 48-bit Node ID.
+        /// Returns a randomly genrated 48-bit Node ID.
         /// </summary>
         /// <returns>A byte-array representing the 48-bit Node ID</returns>
         public static Byte[] GetNodeID()
         {
-            if (System.Net.NetworkInformation.PhysicalAddress.None.Equals(s_physicalAddress))
+            using (System.Security.Cryptography.RNGCryptoServiceProvider cryptoServiceProvider = new System.Security.Cryptography.RNGCryptoServiceProvider())
             {
-                System.Net.NetworkInformation.NetworkInterface[] networkInterfaces = System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces();
-                if (networkInterfaces.Length > 0)
-                {
-                    s_physicalAddress = networkInterfaces[0].GetPhysicalAddress();
-                }
-                else
-                {
-                    using (System.Security.Cryptography.RNGCryptoServiceProvider cryptoServiceProvider = new System.Security.Cryptography.RNGCryptoServiceProvider())
-                    {
-                        Byte[] fakeNode = new Byte[6];
-                        cryptoServiceProvider.GetBytes(fakeNode);
-                        fakeNode[0] = (Byte)(fakeNode[0] | 0x01);
-                        s_physicalAddress = new System.Net.NetworkInformation.PhysicalAddress(fakeNode);
-                    }
-                }
+                Byte[] fakeNode = new Byte[6];
+                cryptoServiceProvider.GetBytes(fakeNode);
+                return fakeNode;
             }
-
-            return s_physicalAddress.GetAddressBytes();
         }
 
         /// <summary>

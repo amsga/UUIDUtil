@@ -8,11 +8,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v2.1.0] - 2024-06-05
+[v2.1.0](https://github.com/TensionDev/UUIDUtil/releases/tag/v2.1.0)
+
+
+## [v2.1.0-beta] - 2024-06-05
+[v2.1.0-beta](https://github.com/TensionDev/UUIDUtil/releases/tag/v2.1.0-beta)
+
+### Changed
+- Added UUID v7 generated based on current system date and time as well as Fixed Bit-Length Dedicated Counter (Method 1).
+- Added UUID v7 generated based on current system date and time as well as Replace Leftmost Random Bits with Increased Clock Precision (Method 3).
+
+
+## [v2.1.0-alpha] - 2023-06-15
+[v2.1.0-alpha](https://github.com/TensionDev/UUIDUtil/releases/tag/v2.1.0-alpha)
+
+### Changed
+- Changed license from GNU General Public License Version 3 to Apache License Version 2.0.
+
+
 ## [v2.0.0] - 2023-06-15
 [v2.0.0](https://github.com/TensionDev/UUIDUtil/releases/tag/v2.0.0)
 
 ### Changed
 - Changed license from GNU General Public License Version 3 to Apache License Version 2.0.
+
+
+## [v1.2.0-alpha] - 2022-12-15
+[v1.2.0-alpha](https://github.com/TensionDev/UUIDUtil/releases/tag/v1.2.0-alpha)
+
+### Added
+- Added UUID v6 generated based on current system date and time as well as local Network MAC Address.
+- Added UUID v6 generated based on current system date and time as well as supplied Network MAC Address.
+- Added UUID v6 generated based on supplied system date and time as well as local Network MAC Address.
+- Added UUID v6 generated based on supplied system date and time as well as supplied Network MAC Address.
+- Added UUID v7 generated based on current system date and time as well as generated random fields.
+- Added UUID v7 generated based on supplied system date and time as well as generated random fields.
+- Added UUID v7 generated based on supplied system date and time as well as supplied random fields.
 
 
 ## [v1.1.0] - 2022-05-31
