@@ -2,7 +2,7 @@
 
 [![.NET](https://github.com/TensionDev/UUIDUtil/actions/workflows/dotnet.yml/badge.svg)](https://github.com/TensionDev/UUIDUtil/actions/workflows/dotnet.yml)
 [![Package Release](https://github.com/TensionDev/UUIDUtil/actions/workflows/package-release.yml/badge.svg)](https://github.com/TensionDev/UUIDUtil/actions/workflows/package-release.yml)
-[![CodeQL](https://github.com/TensionDev/UUIDUtil/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/TensionDev/UUIDUtil/actions/workflows/codeql-analysis.yml)
+[![CodeQL](https://github.com/TensionDev/UUIDUtil/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/TensionDev/UUIDUtil/actions/workflows/github-code-scanning/codeql)
 
 A project to store UUID functions within a library for future use.  
 This project references the following documents for implementation.  
