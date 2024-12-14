@@ -12,7 +12,8 @@ namespace XUnitTestProjectUUID
         [Fact]
         public void TestGetNodeID()
         {
-            IList<byte[]> expectedNodeIDs = new List<byte[]>();
+            List<byte[]> expectedNodeIDs = new List<byte[]>();
+            int expectedLength = 6;
             NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
             foreach (NetworkInterface nic in nics)
             {
@@ -24,7 +25,7 @@ namespace XUnitTestProjectUUID
             if (nics.Length > 0)
                 Assert.Contains(nodeID, expectedNodeIDs);
             else
-                Assert.True(nodeID.Length == 6);
+                Assert.Equal(expectedLength, nodeID.Length);
         }
 
         [Fact]

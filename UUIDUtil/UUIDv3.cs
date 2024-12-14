@@ -25,6 +25,10 @@ namespace TensionDev.UUID
     /// </summary>
     public class UUIDv3
     {
+        protected UUIDv3()
+        {
+        }
+
         /// <summary>
         /// Initialises a new GUID/UUID based on Version 3 (MD5 namespace name-based)
         /// </summary>

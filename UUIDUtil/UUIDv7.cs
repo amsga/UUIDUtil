@@ -29,6 +29,10 @@ namespace TensionDev.UUID
         protected internal static UInt16 s_counter = 0;
         protected internal static readonly Object s_counterLock = new Object();
 
+        protected UUIDv7()
+        {
+        }
+
         public enum GenerationMethod
         {
             /// <summary>

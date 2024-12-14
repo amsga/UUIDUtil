@@ -25,6 +25,10 @@ namespace TensionDev.UUID
     /// </summary>
     public class UUIDv5
     {
+        protected UUIDv5()
+        {
+        }
+
         /// <summary>
         /// Initialises a new GUID/UUID based on Version 5 (SHA-1 namespace name-based)
         /// </summary>

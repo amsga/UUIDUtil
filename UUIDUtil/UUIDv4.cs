@@ -23,6 +23,10 @@ namespace TensionDev.UUID
     /// </summary>
     public class UUIDv4
     {
+        protected UUIDv4()
+        {
+        }
+
         /// <summary>
         /// Initialises a new GUID/UUID based on Version 4 (random)
         /// </summary>

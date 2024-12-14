@@ -29,6 +29,10 @@ namespace TensionDev.UUID
         protected internal static readonly Object s_initLock = new Object();
         protected internal static readonly Object s_clockLock = new Object();
 
+        protected UUIDv6()
+        {
+        }
+
         /// <summary>
         /// Initialises a new GUID/UUID based on Version 6 (date-time)
         /// </summary>

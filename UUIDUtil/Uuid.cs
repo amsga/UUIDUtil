@@ -22,12 +22,14 @@ namespace TensionDev.UUID
 {
     public sealed class Uuid : IComparable<Uuid>, IEquatable<Uuid>
     {
-        private uint _time_low;
-        private ushort _time_mid;
-        private ushort _time_hi_and_version;
+        private const string INVALID_FORMAT_STRING = "The format of s is invalid";
+        private const string HEX_FORMAT_STRING = "{0:x2}";
+        private readonly uint _time_low;
+        private readonly ushort _time_mid;
+        private readonly ushort _time_hi_and_version;
         private byte _clock_seq_hi_and_reserved;
-        private byte _clock_seq_low;
-        private byte[] _node;
+        private readonly byte _clock_seq_low;
+        private readonly byte[] _node;
 
         /// <summary>
         /// A read-only instance of the Uuid object whose value is all zeros.
@@ -37,7 +39,7 @@ namespace TensionDev.UUID
         /// <summary>
         /// A read-only instance of the Uuid object whose value is all ones.
         /// </summary>
-        public static readonly Uuid Max = new Uuid(uint.MaxValue, ushort.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, new byte[]  { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff});
+        public static readonly Uuid Max = new Uuid(uint.MaxValue, ushort.MaxValue, ushort.MaxValue, byte.MaxValue, byte.MaxValue, new byte[] { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff });
 
         public Uuid()
         {
@@ -84,20 +86,17 @@ namespace TensionDev.UUID
         /// <exception cref="System.OverflowException">The format of s is invalid</exception>
         public Uuid(string s) : this()
         {
-            if (s == null)
-                throw new ArgumentNullException(nameof(s));
-
             if (String.IsNullOrEmpty(s))
-                throw new FormatException("The format of s is invalid");
+                throw new ArgumentNullException(nameof(s), INVALID_FORMAT_STRING);
 
             if (s.Length != 32 && s.Length != 36 && s.Length != 38)
-                throw new FormatException("The format of s is invalid");
+                throw new FormatException(INVALID_FORMAT_STRING);
 
-            if (s.Length == 38)
+            if (s.Length == 38 &&
+                !(s.StartsWith("{") && s.EndsWith("}")) &&
+                !(s.StartsWith("(") && s.EndsWith(")")))
             {
-                if (!(s.StartsWith("{") && s.EndsWith("}")) &&
-                    !(s.StartsWith("(") && s.EndsWith(")")))
-                    throw new FormatException("The format of s is invalid");
+                throw new FormatException(INVALID_FORMAT_STRING);
             }
 
             string vs = s.Replace("{", "");
@@ -107,15 +106,15 @@ namespace TensionDev.UUID
 
             if (vs.Length == 36)
             {
-                Regex regex = new Regex(@"\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b", RegexOptions.IgnoreCase);
+                Regex regex = new Regex(@"\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b", RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(100));
                 MatchCollection matches = regex.Matches(vs);
                 if (matches.Count == 0)
-                    throw new FormatException("The format of s is invalid");
+                    throw new FormatException(INVALID_FORMAT_STRING);
             }
             vs = vs.Replace("-", "");
 
             if (vs.Length != 32)
-                throw new FormatException("The format of s is invalid");
+                throw new FormatException(INVALID_FORMAT_STRING);
 
             Byte[] b = new Byte[16];
             for (Int32 i = 0; i < vs.Length; i += 2)
@@ -126,11 +125,11 @@ namespace TensionDev.UUID
                 }
                 catch (FormatException)
                 {
-                    throw new FormatException("The format of s is invalid");
+                    throw new FormatException(INVALID_FORMAT_STRING);
                 }
                 catch (OverflowException)
                 {
-                    throw new OverflowException("The format of s is invalid");
+                    throw new OverflowException(INVALID_FORMAT_STRING);
                 }
             }
 
@@ -356,9 +355,10 @@ namespace TensionDev.UUID
         {
             byte newClockSeq = (byte)(_clock_seq_hi_and_reserved & 0x1F);
             newClockSeq = (byte)(newClockSeq | 0xC0);
-            Uuid variant2 = new Uuid(this.ToByteArray());
-
-            variant2._clock_seq_hi_and_reserved = newClockSeq;
+            Uuid variant2 = new Uuid(this.ToByteArray())
+            {
+                _clock_seq_hi_and_reserved = newClockSeq
+            };
 
             return variant2.ToGuid();
         }
@@ -370,10 +370,13 @@ namespace TensionDev.UUID
         /// <returns>A TensionDev.UUID.Uuid object.</returns>
         public static Uuid ToVariant1(Guid guid)
         {
-            Uuid variant1 = new Uuid(guid.ToString());
-            byte newClockSeq = (byte)(variant1._clock_seq_hi_and_reserved & 0x3F);
+            Uuid variant2 = new Uuid(guid.ToString());
+            byte newClockSeq = (byte)(variant2._clock_seq_hi_and_reserved & 0x3F);
             newClockSeq = (byte)(newClockSeq | 0x80);
-            variant1._clock_seq_hi_and_reserved = newClockSeq;
+            Uuid variant1 = new Uuid(variant2.ToByteArray())
+            {
+                _clock_seq_hi_and_reserved = newClockSeq
+            };
 
             return variant1;
         }
@@ -432,8 +435,8 @@ namespace TensionDev.UUID
             sb.Append("-");
             sb.Append(BitConverter.ToString(BitConverter.GetBytes(_time_hi_and_version)).Replace("-", ""));
             sb.Append("-");
-            sb.AppendFormat("{0:x2}", _clock_seq_hi_and_reserved);
-            sb.AppendFormat("{0:x2}", _clock_seq_low);
+            sb.AppendFormat(HEX_FORMAT_STRING, _clock_seq_hi_and_reserved);
+            sb.AppendFormat(HEX_FORMAT_STRING, _clock_seq_low);
             sb.Append("-");
             sb.Append(BitConverter.ToString(_node).Replace("-", ""));
 
@@ -447,8 +450,8 @@ namespace TensionDev.UUID
             sb.Append(BitConverter.ToString(BitConverter.GetBytes(_time_low)).Replace("-", ""));
             sb.Append(BitConverter.ToString(BitConverter.GetBytes(_time_mid)).Replace("-", ""));
             sb.Append(BitConverter.ToString(BitConverter.GetBytes(_time_hi_and_version)).Replace("-", ""));
-            sb.AppendFormat("{0:x2}", _clock_seq_hi_and_reserved);
-            sb.AppendFormat("{0:x2}", _clock_seq_low);
+            sb.AppendFormat(HEX_FORMAT_STRING, _clock_seq_hi_and_reserved);
+            sb.AppendFormat(HEX_FORMAT_STRING, _clock_seq_low);
             sb.Append(BitConverter.ToString(_node).Replace("-", ""));
 
             return sb.ToString().ToLower();

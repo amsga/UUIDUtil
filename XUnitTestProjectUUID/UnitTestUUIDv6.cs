@@ -11,9 +11,10 @@ namespace XUnitTestProjectUUID
         [Fact]
         public void TestGetNodeID()
         {
+            int expectedLength = 6;
             byte[] nodeID = TensionDev.UUID.UUIDv6.GetNodeID();
 
-            Assert.True(nodeID.Length == 6);
+            Assert.Equal(expectedLength, nodeID.Length);
         }
 
         [Fact]
@@ -64,7 +65,7 @@ namespace XUnitTestProjectUUID
         [Fact]
         public void TestUUIDVariantField()
         {
-            IList<char> expectedVariantField = new List<char>() { '8', '9', 'a', 'b' };
+            List<char> expectedVariantField = new List<char>() { '8', '9', 'a', 'b' };
 
             ConcurrentBag<String> concurrentBag = new ConcurrentBag<String>();
 

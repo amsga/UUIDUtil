@@ -6,17 +6,35 @@ namespace XUnitTestProjectUUID
     public class UnitTestUuid
     {
         [Fact]
+        public void TestEmptyUUID()
+        {
+            string expectedUUID = "00000000-0000-0000-0000-000000000000";
+
+            TensionDev.UUID.Uuid uuid = TensionDev.UUID.Uuid.Empty;
+            Assert.Equal(expectedUUID, uuid.ToString());
+        }
+
+        [Fact]
+        public void TestMaxUUID()
+        {
+            string expectedUUID = "ffffffff-ffff-ffff-ffff-ffffffffffff";
+
+            TensionDev.UUID.Uuid uuid = TensionDev.UUID.Uuid.Max;
+            Assert.Equal(expectedUUID, uuid.ToString());
+        }
+
+        [Fact]
         public void TestConstructorByteArray1()
         {
             byte[] vs = null;
-            ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => { TensionDev.UUID.Uuid uuid = new TensionDev.UUID.Uuid(vs); });
+            Assert.Throws<ArgumentNullException>(() => { TensionDev.UUID.Uuid uuid = new TensionDev.UUID.Uuid(vs); });
         }
 
         [Fact]
         public void TestConstructorByteArray2()
         {
             byte[] vs = new byte[17];
-            ArgumentException ex = Assert.Throws<ArgumentException>(() => { TensionDev.UUID.Uuid uuid = new TensionDev.UUID.Uuid(vs); });
+            Assert.Throws<ArgumentException>(() => { TensionDev.UUID.Uuid uuid = new TensionDev.UUID.Uuid(vs); });
         }
 
         [Fact]
@@ -33,14 +51,14 @@ namespace XUnitTestProjectUUID
         public void TestConstructorString1()
         {
             string vs = null;
-            ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => { TensionDev.UUID.Uuid uuid = new TensionDev.UUID.Uuid(vs); });
+            Assert.Throws<ArgumentNullException>(() => { TensionDev.UUID.Uuid uuid = new TensionDev.UUID.Uuid(vs); });
         }
 
         [Fact]
         public void TestConstructorString2()
         {
             string vs = "(7d444840-9dc0-11d1-b245-5ffdce74fad2}";
-            FormatException ex = Assert.Throws<FormatException>(() => { TensionDev.UUID.Uuid uuid = new TensionDev.UUID.Uuid(vs); });
+            Assert.Throws<FormatException>(() => { TensionDev.UUID.Uuid uuid = new TensionDev.UUID.Uuid(vs); });
         }
 
         [Fact]
@@ -62,7 +80,7 @@ namespace XUnitTestProjectUUID
             byte d = byte.MaxValue;
             byte e = byte.MaxValue;
             byte[] f = null;
-            ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => { TensionDev.UUID.Uuid uuid = new TensionDev.UUID.Uuid(a, b, c, d, e, f); });
+            Assert.Throws<ArgumentNullException>(() => { TensionDev.UUID.Uuid uuid = new TensionDev.UUID.Uuid(a, b, c, d, e, f); });
         }
 
         [Fact]
@@ -74,7 +92,7 @@ namespace XUnitTestProjectUUID
             byte d = byte.MinValue;
             byte e = byte.MinValue;
             byte[] f = new byte[5];
-            ArgumentException ex = Assert.Throws<ArgumentException>(() => { TensionDev.UUID.Uuid uuid = new TensionDev.UUID.Uuid(a, b, c, d, e, f); });
+            Assert.Throws<ArgumentException>(() => { TensionDev.UUID.Uuid uuid = new TensionDev.UUID.Uuid(a, b, c, d, e, f); });
         }
 
         [Fact]
@@ -301,7 +319,7 @@ namespace XUnitTestProjectUUID
             byte[] vs = new byte[] { 0x7d, 0x44, 0x48, 0x40, 0x9d, 0xc0, 0x11, 0xd1, 0xb2, 0x45, 0x5f, 0xfd, 0xce, 0x74, 0xfa, 0xd2 };
             TensionDev.UUID.Uuid uuid = new TensionDev.UUID.Uuid(vs);
 
-            FormatException ex = Assert.Throws<FormatException>(() => { string actual = uuid.ToString("C"); });
+            Assert.Throws<FormatException>(() => { uuid.ToString("C"); });
         }
     }
 }
