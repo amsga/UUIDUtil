@@ -321,5 +321,207 @@ namespace XUnitTestProjectUUID
 
             Assert.Throws<FormatException>(() => { uuid.ToString("C"); });
         }
+
+        [Fact]
+        public void TestOperatorEquals1()
+        {
+            object other = new object();
+            string vs = "7d444840-9dc0-11d1-b245-5ffdce74fad2";
+            TensionDev.UUID.Uuid uuid = TensionDev.UUID.Uuid.Parse(vs);
+
+            bool actualResult = uuid == other;
+            Assert.False(actualResult);
+        }
+
+        [Fact]
+        public void TestOperatorEquals2()
+        {
+            string vs = "{7d444840-9dc0-11d1-b245-5ffdce74fad2}";
+            TensionDev.UUID.Uuid uuid1 = TensionDev.UUID.Uuid.Parse(vs);
+            TensionDev.UUID.Uuid uuid2 = TensionDev.UUID.Uuid.Parse(vs);
+
+            bool actualResult = uuid1 == uuid2;
+            Assert.True(actualResult);
+        }
+
+        [Fact]
+        public void TestOperatorEquals3()
+        {
+            TensionDev.UUID.Uuid other = null;
+            string vs = "7d444840-9dc0-11d1-b245-5ffdce74fad2";
+            TensionDev.UUID.Uuid uuid = TensionDev.UUID.Uuid.Parse(vs);
+
+            bool actualResult = uuid == other;
+            Assert.False(actualResult);
+        }
+
+        [Fact]
+        public void TestOperatorNotEquals1()
+        {
+            object other = new object();
+            string vs = "7d444840-9dc0-11d1-b245-5ffdce74fad2";
+            TensionDev.UUID.Uuid uuid = TensionDev.UUID.Uuid.Parse(vs);
+
+            bool actualResult = uuid != other;
+            Assert.True(actualResult);
+        }
+
+        [Fact]
+        public void TestOperatorNotEquals2()
+        {
+            string vs = "{7d444840-9dc0-11d1-b245-5ffdce74fad2}";
+            TensionDev.UUID.Uuid uuid1 = TensionDev.UUID.Uuid.Parse(vs);
+            TensionDev.UUID.Uuid uuid2 = TensionDev.UUID.Uuid.Parse(vs);
+
+            bool actualResult = uuid1 != uuid2;
+            Assert.False(actualResult);
+        }
+
+        [Fact]
+        public void TestOperatorNotEquals3()
+        {
+            TensionDev.UUID.Uuid other = null;
+            string vs = "7d444840-9dc0-11d1-b245-5ffdce74fad2";
+            TensionDev.UUID.Uuid uuid = TensionDev.UUID.Uuid.Parse(vs);
+
+            bool actualResult = uuid != other;
+            Assert.True(actualResult);
+        }
+
+        [Fact]
+        public void TestOperatorLessThan1()
+        {
+            string vs1 = "7d444830-9dc0-11d1-b245-5ffdce74fad2";
+            string vs2 = "7d444840-9dc0-11d1-b245-5ffdce74fad2";
+            TensionDev.UUID.Uuid uuid1 = TensionDev.UUID.Uuid.Parse(vs1);
+            TensionDev.UUID.Uuid uuid2 = TensionDev.UUID.Uuid.Parse(vs2);
+
+            bool actualResult = uuid1 < uuid2;
+            Assert.True(actualResult);
+        }
+
+        [Fact]
+        public void TestOperatorLessThan2()
+        {
+            string vs = "{7d444840-9dc0-11d1-b245-5ffdce74fad2}";
+            TensionDev.UUID.Uuid uuid1 = TensionDev.UUID.Uuid.Parse(vs);
+            TensionDev.UUID.Uuid uuid2 = TensionDev.UUID.Uuid.Parse(vs);
+
+            bool actualResult = uuid1 < uuid2;
+            Assert.False(actualResult);
+        }
+
+        [Fact]
+        public void TestOperatorLessThan3()
+        {
+            TensionDev.UUID.Uuid other = null;
+            string vs = "7d444840-9dc0-11d1-b245-5ffdce74fad2";
+            TensionDev.UUID.Uuid uuid = TensionDev.UUID.Uuid.Parse(vs);
+
+            bool actualResult = uuid < other;
+            Assert.False(actualResult);
+        }
+
+        [Fact]
+        public void TestOperatorGreaterThan1()
+        {
+            string vs1 = "7d444830-9dc0-11d1-b245-5ffdce74fad2";
+            string vs2 = "7d444840-9dc0-11d1-b245-5ffdce74fad2";
+            TensionDev.UUID.Uuid uuid1 = TensionDev.UUID.Uuid.Parse(vs1);
+            TensionDev.UUID.Uuid uuid2 = TensionDev.UUID.Uuid.Parse(vs2);
+
+            bool actualResult = uuid1 > uuid2;
+            Assert.False(actualResult);
+        }
+
+        [Fact]
+        public void TestOperatorGreaterThan2()
+        {
+            string vs = "{7d444840-9dc0-11d1-b245-5ffdce74fad2}";
+            TensionDev.UUID.Uuid uuid1 = TensionDev.UUID.Uuid.Parse(vs);
+            TensionDev.UUID.Uuid uuid2 = TensionDev.UUID.Uuid.Parse(vs);
+
+            bool actualResult = uuid1 > uuid2;
+            Assert.False(actualResult);
+        }
+
+        [Fact]
+        public void TestOperatorGreaterThan3()
+        {
+            TensionDev.UUID.Uuid other = null;
+            string vs = "7d444840-9dc0-11d1-b245-5ffdce74fad2";
+            TensionDev.UUID.Uuid uuid = TensionDev.UUID.Uuid.Parse(vs);
+
+            bool actualResult = uuid > other;
+            Assert.True(actualResult);
+        }
+
+        [Fact]
+        public void TestOperatorLessThanOrEqual1()
+        {
+            string vs1 = "7d444830-9dc0-11d1-b245-5ffdce74fad2";
+            string vs2 = "7d444840-9dc0-11d1-b245-5ffdce74fad2";
+            TensionDev.UUID.Uuid uuid1 = TensionDev.UUID.Uuid.Parse(vs1);
+            TensionDev.UUID.Uuid uuid2 = TensionDev.UUID.Uuid.Parse(vs2);
+
+            bool actualResult = uuid1 <= uuid2;
+            Assert.True(actualResult);
+        }
+
+        [Fact]
+        public void TestOperatorLessThanOrEqual2()
+        {
+            string vs = "{7d444840-9dc0-11d1-b245-5ffdce74fad2}";
+            TensionDev.UUID.Uuid uuid1 = TensionDev.UUID.Uuid.Parse(vs);
+            TensionDev.UUID.Uuid uuid2 = TensionDev.UUID.Uuid.Parse(vs);
+
+            bool actualResult = uuid1 <= uuid2;
+            Assert.True(actualResult);
+        }
+
+        [Fact]
+        public void TestOperatorLessThanOrEqual3()
+        {
+            TensionDev.UUID.Uuid other = null;
+            string vs = "7d444840-9dc0-11d1-b245-5ffdce74fad2";
+            TensionDev.UUID.Uuid uuid = TensionDev.UUID.Uuid.Parse(vs);
+
+            bool actualResult = uuid <= other;
+            Assert.False(actualResult);
+        }
+
+        [Fact]
+        public void TestOperatorGreaterThanOrEqual1()
+        {
+            string vs1 = "7d444830-9dc0-11d1-b245-5ffdce74fad2";
+            string vs2 = "7d444840-9dc0-11d1-b245-5ffdce74fad2";
+            TensionDev.UUID.Uuid uuid1 = TensionDev.UUID.Uuid.Parse(vs1);
+            TensionDev.UUID.Uuid uuid2 = TensionDev.UUID.Uuid.Parse(vs2);
+
+            bool actualResult = uuid1 >= uuid2;
+            Assert.False(actualResult);
+        }
+
+        [Fact]
+        public void TestOperatorGreaterThanOrEqual2()
+        {
+            string vs = "{7d444840-9dc0-11d1-b245-5ffdce74fad2}";
+            TensionDev.UUID.Uuid uuid1 = TensionDev.UUID.Uuid.Parse(vs);
+            TensionDev.UUID.Uuid uuid2 = TensionDev.UUID.Uuid.Parse(vs);
+
+            bool actualResult = uuid1 >= uuid2;
+            Assert.True(actualResult);
+        }
+
+        [Fact]
+        public void TestOperatorGreaterThanOrEqual3()
+        {
+            TensionDev.UUID.Uuid other = null;
+            string vs = "7d444840-9dc0-11d1-b245-5ffdce74fad2";
+            TensionDev.UUID.Uuid uuid = TensionDev.UUID.Uuid.Parse(vs);
+
+            bool actualResult = uuid >= other;
+            Assert.True(actualResult);
+        }
     }
 }
